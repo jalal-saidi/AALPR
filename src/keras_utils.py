@@ -28,7 +28,13 @@ def save_model(model,path,verbose=0):
 
 def load_model(path,custom_objects={},verbose=0):
 	from keras.models import model_from_json
-
+	#import tensorflow as tf
+	#from keras.backend.tensorflow_backend import set_session
+	#gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
+	#config=tf.ConfigProto(gpu_options=gpu_options)
+	# dynamically grow the memory used on the GPU
+	#config.gpu_options.allow_growth = True
+	#set_session(tf.Session(config=config))
 	path = splitext(path)[0]
 	with open('%s.json' % path,'r') as json_file:
 		model_json = json_file.read()
@@ -98,6 +104,7 @@ def reconstruct(Iorig,I,Y,out_size,threshold=.9):
 def detect_lp(model,I,max_dim,net_step,out_size,threshold):
 
 	min_dim_img = min(I.shape[:2])
+	#print I.shape[:2]
 	factor 		= float(max_dim)/min_dim_img
 
 	w,h = (np.array(I.shape[1::-1],dtype=float)*factor).astype(int).tolist()
@@ -107,12 +114,12 @@ def detect_lp(model,I,max_dim,net_step,out_size,threshold):
 
 	T = Iresized.copy()
 	T = T.reshape((1,T.shape[0],T.shape[1],T.shape[2]))
-
+	#print 'predicting'
 	start 	= time.time()
 	Yr 		= model.predict(T)
 	Yr 		= np.squeeze(Yr)
 	elapsed = time.time() - start
 
 	L,TLps = reconstruct(I,Iresized,Yr,out_size,threshold)
-
+	#print 'reconstruction finished'
 	return L,TLps,elapsed

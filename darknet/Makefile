@@ -1,7 +1,7 @@
 GPU=0
 CUDNN=0
 OPENCV=0
-OPENMP=1
+OPENMP=0
 DEBUG=0
 
 ARCH= -gencode arch=compute_30,code=sm_30 \
@@ -19,14 +19,16 @@ ALIB=libdarknet.a
 EXEC=darknet
 OBJDIR=./obj/
 
+
 CC=gcc
+CFLAGS=-I/usr/local/opt/include/
 NVCC=nvcc 
 AR=ar
 ARFLAGS=rcs
 OPTS=-Ofast
 LDFLAGS= -lm -pthread 
 COMMON= -Iinclude/ -Isrc/
-CFLAGS=-Wall -Wno-unused-result -Wno-unknown-pragmas -Wfatal-errors -fPIC
+CFLAGS+=-Wall -Wno-unused-result -Wno-unknown-pragmas -Wfatal-errors -fPIC
 
 ifeq ($(OPENMP), 1) 
 CFLAGS+= -fopenmp
